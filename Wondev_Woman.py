@@ -3,34 +3,37 @@ import math
 from copy import deepcopy
 
 
-class Node:
+class Cell:
 
-    def __init__(self):
-        self.board = [[Cell(Position(x, y)) for y in range(size)] for x in range(size)]
-        self.my_units = [Unit(i, 0) for i in range(units_per_player)]
-        self.other_units = [Unit(i, 1) for i in range(units_per_player)]
-        self.played_action = None
+    def __init__(self, position):
+        self.position = position
+        self.neighbours = []
+        self.state = ValidCell(0)
 
-    def set_cells_neighbours(self):
-        for x in range(size):
-            for y in range(size):
-                self.board[x][y].set_neighbours(self.board)
+    def set_neighbours(self, board):
+        for i in range(self.position.x - 1, self.position.x + 2):
+            for j in range(self.position.y - 1, self.position.y + 2):
+                if 0 <= i < size and 0 <= j < size and (i != self.position.x and j != self.position.y):
+                    self.neighbours.append(board[i][j])
 
-    def update_board_row(self, index, row):
-        for i in range(size):
-            elem = row[i]
-            if elem == '.' or elem == '4':
-                self.board[index][i].state == DeadCell()
-            else:
-                self.board[index][i].state == ValidCell(int(elem))
+    def get_accessible_neighbours(self):
+        accessible_neighbours = []
+        for neigh_cell in self.neighbours:
+            if isinstance(neigh_cell.state, ValidCell):
+                if neigh_cell.state.height - self.height <= 1:
+                    accessible_neighbours.append(neigh_cell)
+        return accessible_neighbours
 
 
-class Unit:
+# State classes
+class ValidCell:
 
-    def __init__(self, index, player):
-        self.index = index
-        self.player = player
-        self.position = None
+    def __init__(self, height):
+        self.height = height
+
+
+class DeadCell:
+    pass
 
 
 class Position:
@@ -46,28 +49,40 @@ class Position:
             return False
 
 
-class Cell:
+class Unit:
 
-    def __init__(self, position):
-        self.position = position
-        self.neighbours = []
-        self.state = None
-
-    def set_neighbours(self, board):
-        for i in range(self.position.x - 1, self.position.x + 1):
-            for j in range(self.position.y - 1, self.position.y + 1):
-                if 0 <= i < size and 0 <= j < size:
-                    self.neighbours.append(board[i][j])
+    def __init__(self, index, player):
+        self.index = index
+        self.player = player
+        self.cell = None
 
 
-class ValidCell:
+class Node:
 
-    def __init__(self, height):
-        self.height = height
+    def __init__(self):
+        self.board = [[Cell(Position(x, y)) for y in range(size)] for x in range(size)]
+        self.set_cells_neighbours(self)
+        # !! Change player number according to starting player ? !!
+        self.my_units = [Unit(i, 0) for i in range(units_per_player)]
+        self.other_units = [Unit(i, 1) for i in range(units_per_player)]
+        self.played_action = None
 
+    def set_cells_neighbours(self):
+        for x in range(size):
+            for y in range(size):
+                self.board[x][y].set_neighbours(self.board)
 
-class DeadCell:
-    pass
+    def update_board_row(self, row_index, row):
+        for i in range(size):
+            elem = row[i]
+            if elem == '4' or elem == '.':
+                current_cell = self.board[row_index][i]
+                if isinstance(current_cell.state, ValidCell):
+                    for neighbour in current_cell.neighbours:
+                        neighbour.neighbours.remove(current_cell)
+                    current_cell.state == DeadCell()
+            else:
+                self.board[row_index][i].state.height == int(elem)
 
 
 global size
@@ -79,16 +94,14 @@ node = Node()
 # game loop
 while True:
     for row_index in range(size):
-        board_row = input()
-        node.update_board_row(row_index, board_row)
+        board_new_row = input()
+        node.update_board_row(row_index, board_new_row)
     for unit_index in range(units_per_player):
-        # x, y = [int(j) for j in input().split()]
-        x, y = int(input.split())
-        node.my_units[unit_index].position = node.board[x, y].position
-        # node.my_units[unit_index].update_position([unit_x, unit_y])
-    for i in range(units_per_player):
-        other_x, other_y = [int(j) for j in input().split()]
-        node.other_units[i].update_position([other_x, other_y])
+        my_x, my_y = int(input.split())
+        node.my_units[unit_index].cell = node.board[my_x, my_y]
+    for unit_index in range(units_per_player):
+        other_x, other_y = int(input().split())
+        node.other_units[unit_index].cell = node.board[other_x][other_y]
 
     legal_actions = int(input())
     max_score = 0
