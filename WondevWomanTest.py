@@ -33,7 +33,7 @@ WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'g
 # Copy/Paste the code
 WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'view-lines'))).click()
 ActionChains(driver).key_down(Keys.CONTROL).send_keys("a").key_up(Keys.CONTROL).send_keys(Keys.DELETE).perform()
-fo = open('/home/merlin/Documents/Centrale/refresher_cs/WondevWoman/Wondev_Woman.py', 'r')
+fo = open('/WondevWoman/WondevWoman.py', 'r')
 line = fo.readline()
 while line != '':
     pyperclip.copy(line)

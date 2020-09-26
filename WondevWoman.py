@@ -42,7 +42,7 @@ class Position:
         self.x = x
         self.y = y
 
-    def equals(self, position):
+    def __eq__(self, position):
         if self.x == position.x and self.y == position.y:
             return True
         else:
@@ -80,9 +80,9 @@ class Node:
                 if isinstance(current_cell.state, ValidCell):
                     for neighbour in current_cell.neighbours:
                         neighbour.neighbours.remove(current_cell)
-                    current_cell.state == DeadCell()
+                    current_cell.state = DeadCell()
             else:
-                self.board[row_index][i].state.height == int(elem)
+                self.board[row_index][i].state.height = int(elem)
 
 
 global size
