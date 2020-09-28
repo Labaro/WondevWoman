@@ -85,6 +85,39 @@ class Node:
                 self.board[row_index][i].state.height = int(elem)
 
 
+class Action:
+    def __init__(self, unit, dir_1, dir_2):
+        self.unit = unit
+        self.cell_1 = self.convert_dir_to_cell_pos(unit, dir_1)
+        self.cell_2 = self.convert_dir_to_cell_pos(unit, dir_2)
+
+
+class MoveAndBuild(Action):
+    def __init__(self, unit, dir_1, dir_2):
+        super(unit, dir_1, dir_2)
+
+    def convert_dir_to_cell_pos(self, unit, dir):
+        pos = deepcopy(unit.position)
+        for elem in list(dir):
+            if elem == 'S':
+                pos.x += 1
+            elif elem == 'N':
+                pos.x -= 1
+            if elem == 'E':
+                pos.y += 1
+            elif elem == 'W':
+                pos.y -= 1
+        return pos
+
+
+class PushAndBuild(Action):
+    def __init__(self, unit, dir_1, dir_2):
+        super(unit, dir_1, dir_2)
+
+    def convert_dir_to_cell_pos(self, unit, dir):
+        return
+
+
 global size
 global units_per_player
 size = int(input())
