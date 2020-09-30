@@ -9,8 +9,10 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(Cell((3,2),4).is_valid_cell(), None)
         
     def test_distance(self):
-        self.assertEqual(Position(1,2,3).distance_to(2,2),1)
-        self.assertEqual(Position(2,2,3).distance_to(2,4),2)
+        self.assertEqual(Position((2,2),3).distance_to((2,3)),1)
+        self.assertEqual(Position((2,2),3).distance_to((2,4)),2)
+        self.assertEqual(Position((2,2),3).distance_to((1,1)),1)
+        
 
 if __name__ == '__main__':
     unittest.main(argv=['first-arg-is-ignored'], exit=False)
