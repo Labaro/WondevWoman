@@ -2,6 +2,7 @@ import sys
 import math
 from copy import deepcopy
 
+directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
 class Cell:
 
@@ -17,12 +18,15 @@ class Cell:
                     self.neighbours.append(board[i][j])
 
     def get_accessible_neighbours(self):
-        accessible_neighbours = []
-        for neigh_cell in self.neighbours:
-            if isinstance(neigh_cell.state, ValidCell):
-                if neigh_cell.state.height - self.height <= 1:
-                    accessible_neighbours.append(neigh_cell)
-        return accessible_neighbours
+        if isinstance(self.state, DeadCell):
+            return []
+        else:
+            accessible_neighbours = []
+            for neigh_cell in self.neighbours:
+                if isinstance(neigh_cell.state, ValidCell):
+                    if neigh_cell.state.height - self.state.height <= 1:
+                        accessible_neighbours.append(neigh_cell)
+            return accessible_neighbours
 
 
 # State classes
@@ -42,11 +46,20 @@ class Position:
         self.x = x
         self.y = y
 
-    def __eq__(self, position):
-        if self.x == position.x and self.y == position.y:
-            return True
-        else:
-            return False
+    def __eq__(self, other):
+        return  self.x == other.x and self.y == other.y
+
+    def apply_direction(self, direction):
+        x_temp, y_temp = self.x, self.y
+        if "N" in direction:
+            y_temp -= 1
+        if "E" in direction:
+            x_temp += 1
+        if "W" in direction:
+            x_temp -= 1
+        if "S" in direction:
+            y_temp += 1
+        return Position(x_temp, y_temp)
 
 
 class Unit:
@@ -61,7 +74,7 @@ class Node:
 
     def __init__(self):
         self.board = [[Cell(Position(x, y)) for y in range(size)] for x in range(size)]
-        self.set_cells_neighbours(self)
+        self.set_cells_neighbours()
         # !! Change player number according to starting player ? !!
         self.my_units = [Unit(i, 0) for i in range(units_per_player)]
         self.other_units = [Unit(i, 1) for i in range(units_per_player)]
@@ -88,34 +101,18 @@ class Node:
 class Action:
     def __init__(self, unit, dir_1, dir_2):
         self.unit = unit
-        self.cell_1 = self.convert_dir_to_cell_pos(unit, dir_1)
-        self.cell_2 = self.convert_dir_to_cell_pos(unit, dir_2)
+        self.pos_1 = unit.cell.position.apply_direction(dir_1)
+        self.pos_2 = unit.cell.position.apply_direction(dir_2)
 
 
 class MoveAndBuild(Action):
     def __init__(self, unit, dir_1, dir_2):
-        super(unit, dir_1, dir_2)
-
-    def convert_dir_to_cell_pos(self, unit, dir):
-        pos = deepcopy(unit.position)
-        for elem in list(dir):
-            if elem == 'S':
-                pos.x += 1
-            elif elem == 'N':
-                pos.x -= 1
-            if elem == 'E':
-                pos.y += 1
-            elif elem == 'W':
-                pos.y -= 1
-        return pos
+        super().__init__(unit, dir_1, dir_2)
 
 
 class PushAndBuild(Action):
     def __init__(self, unit, dir_1, dir_2):
-        super(unit, dir_1, dir_2)
-
-    def convert_dir_to_cell_pos(self, unit, dir):
-        return
+        super().__init__(unit, dir_1, dir_2)
 
 
 global size
