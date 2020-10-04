@@ -1,7 +1,7 @@
 import unittest
 
 from node import Node
-
+from wondev_woman import Cell, 
 
 class TestState(object):
     def __init__(self, value, final, actions):
