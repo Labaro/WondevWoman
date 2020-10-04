@@ -2,7 +2,8 @@ import sys
 import math
 from copy import deepcopy
 
-directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+# directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+
 
 class Cell:
 
@@ -47,9 +48,9 @@ class Position:
         self.y = y
 
     def __eq__(self, other):
-        return  self.x == other.x and self.y == other.y
+        return self.x == other.x and self.y == other.y
 
-    def apply_direction(self, direction):
+    def convert_direction(self, direction):
         x_temp, y_temp = self.x, self.y
         if "N" in direction:
             y_temp -= 1
@@ -70,7 +71,7 @@ class Unit:
         self.cell = None
 
 
-class Node:
+class Game:
 
     def __init__(self):
         self.board = [[Cell(Position(x, y)) for y in range(size)] for x in range(size)]
@@ -99,46 +100,55 @@ class Node:
 
 
 class Action:
-    def __init__(self, unit, dir_1, dir_2):
+    def __init__(self, unit, name, dir_1):
+        self.name = name
         self.unit = unit
-        self.pos_1 = unit.cell.position.apply_direction(dir_1)
-        self.pos_2 = unit.cell.position.apply_direction(dir_2)
+        self.dir_1 = dir_1
+        self.dir_2 = dir_2
+        self.pos_1 = unit.cell.position.convert_direction(dir_1)
+        self.pos_2 = None
 
 
 class MoveAndBuild(Action):
     def __init__(self, unit, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
+        self.pos_2 = self.pos_1.convert_direction(dir_2)
 
 
 class PushAndBuild(Action):
     def __init__(self, unit, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
+        self.pos_2 = unit.cell.position.convert_direction(dir_2)
 
 
 global size
 global units_per_player
 size = int(input())
 units_per_player = int(input())
-node = Node()
+game = Game()
+# node = Node()
 
 # game loop
 while True:
     for row_index in range(size):
         board_new_row = input()
-        node.update_board_row(row_index, board_new_row)
+        game.update_board_row(row_index, board_new_row)
     for unit_index in range(units_per_player):
         my_x, my_y = int(input.split())
-        node.my_units[unit_index].cell = node.board[my_x, my_y]
+        game.my_units[unit_index].cell = game.board[my_x, my_y]
     for unit_index in range(units_per_player):
         other_x, other_y = int(input().split())
-        node.other_units[unit_index].cell = node.board[other_x][other_y]
+        game.other_units[unit_index].cell = game.board[other_x][other_y]
 
     legal_actions = int(input())
     max_score = 0
     best_action = []
     for i in range(legal_actions):
-        # atype, index, dir_1, dir_2 = input().split()
-        action = input().split()
+        atype, index, dir_1, dir_2 = input().split()
+        if atype == 'MOVE&BUILD':
+            game.played_action = MoveAndBuild(atype, game.my_units[index], dir_1, dir_2)
+        elif atype == 'PUSH&BUILD':
+            game.played_action = PushAndBuild(atype, game.my_units[index], dir_1, dir_2)
         # if score(action) >= max_score:
         #     best_action = action
     # Write an action using print
