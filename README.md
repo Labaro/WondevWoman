@@ -20,6 +20,10 @@ This game for two players consists in winning a maximum of points in an initiali
 
 This game is quite similar to a more famous one : **Santorini**.
 
+## How to install / use it
+
+This section will be detailed once our files are merged and compacted.
+
 ## Our approach 
 
 During the first week, we have decided to get used to the game and the environment proposed by the site. After this, we have decided to work on the following architecture which presents our classes and the main methods : 
