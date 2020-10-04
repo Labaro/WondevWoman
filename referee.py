@@ -1,84 +1,84 @@
 class Referee:
 
-    def ComputeMove(unit,dir1,dir2):
+    def compute_move(unit,dir1,dir2):
 
-        target = getNeigghbor(dir1,unit.position)
-        targetHeight = grid.get(target)
-        if targetHeight == None:
+        target = neighbor(dir1,unit.position)
+        target_height = grid.get(target)
+        if target_height == None:
             print("BadCoords"+" "+str(target.x)+" "+str(target.y))
-        currentHeight = grid.get(unit.position)
-        if targetHeight > currentHeight + 1:
-            print("InvalidMove" + " " + str(currentHeight) + " " + str(targetHeight))
-        if targetHeight >= FINAL_HEIGHT:
+        current_height = grid.get(unit.position)
+        if target_height > current_height + 1:
+            print("InvalidMove" + " " + str(current_height) + " " + str(target_height))
+        if target_height >= final_height:
             print("MoveTooHigh" + " " + str(target.x) + " " + str(target.y))
-        if getUnitOnPoint(target).isPresent():
+        if get_unit_on_point(target).present():
             print("MoveOnUnit" + " " + str(target.x) + " " + str(target.y))
 
-        placeTarget = getNeighbor(dir2, target)
-        placeTargetHeight = grid.get(placeTarget)
-        if placeTargetHeight == None:
-            print("InvalidPlace" + " " + str(placeTarget.x) + " " + str(placeTarget.y))
-        if placeTargetHeight >= FINAL_HEIGHT:
-            print("PlaceTooHigh" + " " + str(targetHeight))
+        place_target = neighbor(dir2, target)
+        place_target_height = grid.get(place_target)
+        if place_target_height == None:
+            print("InvalidPlace" + " " + str(place_target.x) + " " + str(place_target.y))
+        if place_target_height >= final_height:
+            print("PlaceTooHigh" + " " + str(target_height))
 
 
-        result = ActionResult(Action.MOVE)
-        result.moveTarget = target
-        result.placeTarget = placeTarget
+        result = action_result(Action.move)
+        result.move_target = target
+        result.place_target = place_target
 
         #Optional < Unit > possibleUnit = getUnitOnPoint(placeTarget).filter(u -> !u.equals(unit))
 
-        if not possibleUnit.isPresent():
+        if not possibleUnit.present():
             result.placeValid = True
             result.moveValid = True
-        elif FOG_OF_WAR and not unitVisibleToPlayer(possibleUnit.get(), unit.player):
+        elif fog_of_war and not unit_visible_to_player(possibleUnit.get(), unit.player):
             result.placeValid = False
             result.moveValid = True
         else:
-            print("PlaceOnUnit" + " " + str(placeTarget.x) + " " + str(placeTarget.y))
+            print("PlaceOnUnit" + " " + str(place_target.x) + " " + str(place_target.y))
 
-        if targetHeight == FINAL_HEIGHT - 1:
-            result.scorePoint = true
+        if target_height == final_height - 1:
+            result.score_point = True
         result.unit = unit
 
         return result
 
 
 
-    def computePush(unit,dir1,dir2) :
+    def compute_push(unit,dir1,dir2) :
 
         if not validPushDirection(dir1, dir2):
             print("PushInvalid" + " " + str(dir1) + " " + str(dir2))
-        target = getNeighbor(dir1, unit.position)
+        target = neighbor(dir1, unit.position)
 
         #Optional < Unit > maybePushed = getUnitOnPoint(target);
 
-        if not maybePushed.isPresent():
+        if not maybePushed.present():
             print("PushVoid" + " " + str(target.x) + " " + str(target.y))
         pushed = maybePushed.get()
 
         if pushed.player == unit.player :
             print("FriendlyFire" + " " + str(unit.index) + " " + str(pushed.index))
 
-        pushTo = getNeighbor(dir2, pushed.position)
-        toHeight = grid.get(pushTo)
-        fromHeight = grid.get(target)
+        push_to = neighbor(dir2, pushed.position)
+        to_height = grid.get(push_to)
+        from_height = grid.get(target)
 
-        if toHeight == null or toHeight >= FINAL_HEIGHT or toHeight > fromHeight + 1:
+        if to_height == null or to_height >= final_height or to_height > from_height + 1:
             print("PushInvalid" + " " + str(dir1) + " " + str(dir2))
 
-        result = ActionResult(Action.PUSH)
-        result.moveTarget = pushTo
-        result.placeTarget = target
+        result = ActionResult(Action.push)
+        result.move_target = push_to
+        result.place_target = target
 
         #Optional < Unit > possibleUnit = getUnitOnPoint(pushTo);
 
-        if not possibleUnit.isPresent():
-            result.placeValid = true
-            result.moveValid = true
-        elif FOG_OF_WAR and not unitVisibleToPlayer(possibleUnit.get(), unit.player):
-            result.placeValid = false
-            result.moveValid = false
+        if not possibleUnit.present():
+            result.place_valid = True
+            result.move_valid = True
+        elif fog_of_war and not unitVisibleToPlayer(possibleUnit.get(), unit.player):
+            result.place_valid = False
+            result.move_valid = False
 
         else:
             print("PushOnUnit" + " " + str(dir1) + " " + str(dir2))
@@ -88,12 +88,12 @@ class Referee:
         return result
 
 
-    def computeAction(command,unit,dir1,dir2)
+    def compute_action(command,unit,dir1,dir2):
 
-    if command.equalsIgnoreCase(Action.MOVE):
-        return computeMove(unit, dir1, dir2);
-    else if (CAN_PUSH & & command.equals(Action.PUSH):
-        return computePush(unit, dir1, dir2);
+        if command.equal_ignore_case(Action.move):
+            return compute_move(unit, dir1, dir2)
+        else if (can_push and command.equals(Action.push):
+            return compute_push(unit, dir1, dir2)
 
-    else:
-        print("InvalidCommand" + " " + str(command))
+        else:
+            print("InvalidCommand" + " " + str(command))
