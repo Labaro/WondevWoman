@@ -150,8 +150,8 @@ class Referee:
         unit.position = target_position
         game.get_cell(place_target_position).state.height += 1
 
-        if target_height == final_height - 1:
-            player.score += 1
+        #if target_height == final_height - 1:
+        #    player.score += 1
 
 
 
@@ -186,11 +186,11 @@ class Referee:
         unit.position = target_position
         unit_pushed.position = push_to_position
 
-        if from_height == final_height - 1:
-            player.score += 1
+        #if from_height == final_height - 1:
+         #   player.score += 1
 
-        if to_height == final_height - 1:
-            player_other.score += 1
+        #if to_height == final_height - 1:
+        #    player_other.score += 1
 
 
 
