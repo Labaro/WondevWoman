@@ -81,6 +81,9 @@ class Game:
         self.other_units = [Unit(i, 1) for i in range(units_per_player)]
         self.played_action = None
 
+    def get_cell(self, position):
+        return self.board[position.x][position.y]
+
     def set_cells_neighbours(self):
         for x in range(size):
             for y in range(size):
@@ -100,7 +103,7 @@ class Game:
 
 
 class Action:
-    def __init__(self, unit, name, dir_1):
+    def __init__(self, unit, name, dir_1, dir_2):
         self.name = name
         self.unit = unit
         self.dir_1 = dir_1
@@ -110,15 +113,17 @@ class Action:
 
 
 class MoveAndBuild(Action):
-    def __init__(self, unit, dir_1, dir_2):
+    def __init__(self, unit, name, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
         self.pos_2 = self.pos_1.convert_direction(dir_2)
 
 
 class PushAndBuild(Action):
-    def __init__(self, unit, dir_1, dir_2):
+    def __init__(self, unit, name, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
         self.pos_2 = unit.cell.position.convert_direction(dir_2)
+
+
 
 
 global size
