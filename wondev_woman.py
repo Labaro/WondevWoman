@@ -2,6 +2,7 @@ import sys
 import math
 from copy import deepcopy
 
+
 # directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
 
@@ -53,18 +54,31 @@ class Position:
     def convert_direction(self, direction):
         x_temp, y_temp = self.x, self.y
         if "N" in direction:
-            y_temp -= 1
-        if "E" in direction:
-            x_temp += 1
-        if "W" in direction:
             x_temp -= 1
-        if "S" in direction:
+        if "E" in direction:
             y_temp += 1
+        if "W" in direction:
+            y_temp -= 1
+        if "S" in direction:
+            x_temp += 1
         return Position(x_temp, y_temp)
-    
+
+    def direction_to(self, position):
+        diff_x = self.position.x - position.x
+        diff_y = self.position.y - position.y
+        dir = ''
+        if diff_x == 1:
+            dir += 'N'
+        elif diff_x == -1:
+            dir += 'S'
+        if diff_y == 1:
+            dir += 'W'
+        elif diff_y == -1:
+            dir += 'E'
+
     def distance_to(self, other):
         return max(abs(self.x - other[0]), abs(self.y - other[1]))
-        
+
 
 class Unit:
 
@@ -104,6 +118,30 @@ class Game:
             else:
                 self.board[row_index][i].state.height = int(elem)
 
+    def get_actions(self, my_turn):
+        actions = []
+        if my_turn:
+            units_player = self.my_units
+            units_other_player = self.other_units
+        else:
+            units_player = self.other_units
+            units_other_player = self.my_units
+        for i in units_player:
+            # Check possible move and build
+            for move_cell in units_player[i].cell.get_accessible_neighbours():
+                for build_cell in move_cell.neighbours:
+                    dir_1 = units_player[i].position.direction_to(move_cell.position)
+                    dir_2 = dir_1.direction_to(build_cell.position)
+                    actions.append(['MOVE&BUILD', units_player[i], dir_1, dir_2])
+            # Check possible push and build
+            for push_cell in units_player[i].cell.get_pushable_neighbours():
+                for build_cell in push_cell.neighbours:
+                    for adv_unit in units_other_player:
+                        if push_cell.position == adv_unit.cell.position:
+                            dir_1 = units_player[i].position.direction_to(push_cell.position)
+                            dir_2 = units_player[i].position.direction_to(build_cell.position)
+                            actions.append(['PUSH&BUILD', units_player[i], dir_1, dir_2])
+
 
 class Action:
     def __init__(self, unit, name, dir_1, dir_2):
@@ -125,8 +163,6 @@ class PushAndBuild(Action):
     def __init__(self, unit, name, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
         self.pos_2 = unit.cell.position.convert_direction(dir_2)
-
-
 
 
 global size
