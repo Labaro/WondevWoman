@@ -142,6 +142,12 @@ class Game:
                             dir_2 = units_player[i].position.direction_to(build_cell.position)
                             actions.append(['PUSH&BUILD', units_player[i], dir_1, dir_2])
 
+    def simulate(self, action):
+        new_game = deepcopy(self)
+        new_game.played_action = Action(*action)
+        new_game.played_action.play_action()
+        self.played_action.play_action()
+
 
 class Action:
     def __init__(self, unit, name, dir_1, dir_2):
