@@ -28,7 +28,7 @@ This section will be detailed once our files are merged and compacted.
 
 During the first week, we have decided to get used to the game and the environment proposed by the site. After this, we have decided to work on the following architecture which presents our classes and the main methods : 
 
-![alt text](images/diagram.png "Diagram")
+![alt text](Images/diagram.png "Diagram")
 
 
 
