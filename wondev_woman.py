@@ -111,18 +111,6 @@ class Action:
 
 class Referee:
 
-    game_version = 0
-    got_pushed = 2
-    did_push = 1
-    no_push = 0
-    final_height = 4
-    generated_map_size = 6
-    win_on_max_height = True
-    can_push = False
-    unit_per_player = 1
-    fog_of_war = False
-    view_distance = 1
-
 
     def compute_move(game,unit,dir1,dir2):
 
@@ -152,6 +140,7 @@ class Referee:
 
         #if target_height == final_height - 1:
         #    player.score += 1
+        return True
 
 
 
@@ -191,6 +180,7 @@ class Referee:
 
         #if to_height == final_height - 1:
         #    player_other.score += 1
+        return True
 
 
 
