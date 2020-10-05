@@ -131,7 +131,14 @@ class Referee:
 
         # build cell is dead
         if isinstance(game.get_cell(place_target_position).state,DeadCell):
-            print("Bad place"+" "+str(target.x)+" "+str(target.y),file = sys.stderr)
+            print("Bad place"+" "+str(place_target_position.x)+" "+str(place_target_position.y),file = sys.stderr)
+            return False
+
+        # Out of grid ?
+        if place_target_position.x < 0 or place_target_position.y < 0 or place_target_position.x > size or place_target_position.y > size:
+            return False
+
+        if target_position.x < 0 or target_position.y < 0 or target_position.x > size or target_position.y > size:
             return False
 
         # update
@@ -146,34 +153,77 @@ class Referee:
 
     def compute_push(game,unit,dir1,dir2) :
 
-        ''' Compute the decision when moveandpush '''
+        ''' Compute the decision when pushandbuild '''
 
-        # target cell
-        target_position = unit.position.convert_direction(dir1)
+        # Finding the pushed unit
+        X = unit.position.x
+        Y = unit.position.y
+        pos = (X,Y)
+        L = [(X-1,Y),(X-1,Y-1),(X-1,Y+1),(X+1,Y),(X+1,Y+1),(X+1,Y-1),(X,Y-1)(X,Y+1)]
+        for unit in game.other_units:
+            for pos_neighbor in L:
+                if (unit.position.x,unit.position.y) == pos_neighbor:
+                    unit_pushed = unit
 
-        # target cell is dead ?
-        if isinstance(game.get_cell(target_position).state, DeadCell):
+        # pushed cell
+        push_position = unit_pushed.position.convert_direction(dir1)
+
+        # pushed cell is dead ?
+        if isinstance(game.get_cell(push_position).state, DeadCell):
             print("Bad move" + " " + str(target.x) + " " + str(target.y), file=sys.stderr)
             return False
 
-        # Finding the pushed unit
-        for unit in game.other_units:
-            if unit.position == target_position:
-                unit_pushed = unit
+        # build cell
+        place_target_position = unit.position.convert_direction(dir2)
+        place_target_height = game.get_cell(place_target_position).state.height
+
+        # build cell is dead
+        if isinstance(game.get_cell(place_target_position).state, DeadCell):
+            print("Bad place" + " " + str(place_target_position.x) + " " + str(place_target_position.y), file=sys.stderr)
+            return False
+
+        # Out of grid ?
+        if place_target_position.x < 0 or place_target_position.y < 0 or place_target_position.x > size or place_target_position.y > size:
+            return False
+
+        if push_position.x < 0 or push_position.y < 0 or push_position.x > size or push_position.y > size:
+            return False
+
+        # update
+        game.get_cell(place_target_position).state.height += 1
+        unit_pushed.position = push_position
+
+        return True
+
+
+
+
+
+
+
+
+
 
         # push cell
-        push_to_position = unit_pushed.position.convert_direction(dir2)
-        to_height = game.get_cell(push_to_position).state.height
-        from_height = game.get_cell(target_position).state.height
+        build_position = unit.position.convert_direction(dir2)
+        to_height = game.get_cell(build_position).state.height
+        from_height = game.get_cell(push_position).state.height
 
         # target cell is dead ?
         if isinstance(game.get_cell(push_to_position).state, DeadCell):
             print("Bad push" + " " + str(target.x) + " " + str(target.y), file=sys.stderr)
             return False
 
+        if push_to_position.x < 0 or push_to_position.y < 0 or push_to_position.x > size or push_to_position.y > size:
+            return False
+
+        if target_position.x < 0 or target_position.y < 0 or target_position.x > size or target_position.y > size:
+            return False
+
         # Update
         unit.position = target_position
         unit_pushed.position = push_to_position
+
 
         #if from_height == final_height - 1:
          #   player.score += 1
