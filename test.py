@@ -1,6 +1,7 @@
 import unittest
 
 from node import Node
+from wondev_woman import Position
 
 class TestState(object):
     def __init__(self, value, final, actions):
@@ -27,6 +28,12 @@ class TestState(object):
 
 
 class MyTestCase(unittest.TestCase):
+    
+    def test_distance(self):
+        self.assertEqual(Position(2,2).distance_to((2,3)),1)
+        self.assertEqual(Position(2,2).distance_to((2,4)),2)
+        self.assertEqual(Position(2,2).distance_to((1,1)),1)
+        
     def setUp(self):
         self.state1 = TestState(2, True, [])
         self.state2 = TestState(3, True, [])

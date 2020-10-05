@@ -63,7 +63,7 @@ class Position:
         return Position(x_temp, y_temp)
     
     def distance_to(self, other):
-        return max(abs(self.x - other.x), abs(self.y - other.y)
+        return max(abs(self.x - other[0]), abs(self.y - other[1]))
         
 
 class Unit:
