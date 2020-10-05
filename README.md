@@ -1,4 +1,4 @@
-<!!> For having the images (and particulary our class diagram, please read the html file)
+# <center> Refresher in CS - M2 Data Science </center>
 
 For this project, we have decided to focus on a bot based on the game **"Wondev woman"**. 
 Here is a link of the game for further explanations : https://www.codingame.com/multiplayer/bot-programming/wondev-woman
@@ -7,6 +7,8 @@ Here is a link of the game for further explanations : https://www.codingame.com/
 ## The game 
 
 #### Presentation 
+
+![Game](Images/WONDEV.PNG "Game")
 
 This game for two players consists in winning a maximum of points in an initialized board. Each player has 2 units which are put randomly in the beginning of the game. During each turn, the player can move one of its unit to an adjacent cell (diagonal moves are allowed) and, after his move, build on one of the adjacent cell. Building on a cell will increase the "height" of the cell by 1. For winning points, your units have to move on cells of height 3.
 
@@ -28,7 +30,7 @@ This section will be detailed once our files are merged and compacted.
 
 During the first week, we have decided to get used to the game and the environment proposed by the site. After this, we have decided to work on the following architecture which presents our classes and the main methods : 
 
-![alt text](Images/diagram.png "Diagram")
+![Diagram](Images/diagram.png "Diagram")
 
 
 
