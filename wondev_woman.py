@@ -61,7 +61,10 @@ class Position:
         if "S" in direction:
             y_temp += 1
         return Position(x_temp, y_temp)
-
+    
+    def distance_to(self, other):
+        return max(abs(self.x - other.x), abs(self.y - other.y)
+        
 
 class Unit:
 
