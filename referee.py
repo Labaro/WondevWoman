@@ -12,128 +12,73 @@ class Referee:
     fog_of_war = False
     view_distance = 1
 
-    def valid_push_direction(target,push):
-        if target.length() == 2:
-            return push == target or push == target.substring(0,1) or push == target.substring(1,2)
-        else:
-            return push in target
 
-    def unit_visible_to_player(unit,player):
-        if not fog_of_war:
-            return True
-        for u in player.units:
-            if u.position.distance(unit.position) <= view_distance:
-                return True
-        return False
+    def compute_move(game,unit,dir1,dir2):
 
-    def get_neighbor(direction,position):
-        x,y=position.x,position.y
+        ''' Compute the decision when move and build '''
 
-        if 'E' in direction:
-            x = x + 1
-        elif 'W' in direction:
-            x = x - 1
-        if 'S' in direction:
-            y = y + 1
-        elif 'S' in direction:
-            y = y - 1
+        # target cell
+        target_position = unit.position.convert_direction(dir1)
+        target_height = game.get_cell(target_position).state.height
 
-        return Point(x,y)
+        # target cell is dead ?
+        if isinstance(game.get_cell(target_position).state,DeadCell):
+            print("Bad move"+" "+str(target.x)+" "+str(target.y),file = sys.stderr)
+            return False
 
-    def compute_move(unit,dir1,dir2):
+        # build cell
+        place_target_position = target.convert_direction(dir2)
+        place_target_height = game.get_cell(place_target_position).state.height
 
-        target = get_neighbor(dir1,unit.position)
-        target_height = grid.get(target)
-        if target_height == None:
-            print("BadCoords"+" "+str(target.x)+" "+str(target.y))
-        current_height = grid.get(unit.position)
-        if target_height > current_height + 1:
-            print("InvalidMove" + " " + str(current_height) + " " + str(target_height))
-        if target_height >= final_height:
-            print("MoveTooHigh" + " " + str(target.x) + " " + str(target.y))
-        if get_unit_on_point(target).present():
-            print("MoveOnUnit" + " " + str(target.x) + " " + str(target.y))
+        # build cell is dead
+        if isinstance(game.get_cell(place_target_position).state,DeadCell):
+            print("Bad place"+" "+str(target.x)+" "+str(target.y),file = sys.stderr)
+            return False
 
-        place_target = get_neighbor(dir2, target)
-        place_target_height = grid.get(place_target)
-        if place_target_height == None:
-            print("InvalidPlace" + " " + str(place_target.x) + " " + str(place_target.y))
-        if place_target_height >= final_height:
-            print("PlaceTooHigh" + " " + str(target_height))
-
-
-        result = action_result(Action.move)
-        result.move_target = target
-        result.place_target = place_target
-
-        #Optional < Unit > possibleUnit = getUnitOnPoint(placeTarget).filter(u -> !u.equals(unit))
-
-        if not possibleUnit.present():
-            result.place_valid = True
-            result.move_valid = True
-        elif fog_of_war and not unit_visible_to_player(possibleUnit.get(), unit.player):
-            result.place_valid = False
-            result.move_valid = True
-        else:
-            print("PlaceOnUnit" + " " + str(place_target.x) + " " + str(place_target.y))
+        # update
+        unit.position = target_position
+        game.get_cell(place_target_position).state.height += 1
 
         if target_height == final_height - 1:
-            result.score_point = True
-        result.unit = unit
-
-        return result
+            player.score += 1
 
 
 
-    def compute_push(unit,dir1,dir2) :
+    def compute_push(game,unit,dir1,dir2) :
 
-        if not valid_push_direction(dir1, dir2):
-            print("PushInvalid" + " " + str(dir1) + " " + str(dir2))
-        target = get_neighbor(dir1, unit.position)
+        ''' Compute the decision when moveandpush '''
 
-        #Optional < Unit > maybePushed = getUnitOnPoint(target);
+        # target cell
+        target_position = unit.position.convert_direction(dir1)
 
-        if not maybePushed.present():
-            print("PushVoid" + " " + str(target.x) + " " + str(target.y))
-        pushed = maybePushed.get()
+        # target cell is dead ?
+        if isinstance(game.get_cell(target_position).state, DeadCell):
+            print("Bad move" + " " + str(target.x) + " " + str(target.y), file=sys.stderr)
+            return False
 
-        if pushed.player == unit.player :
-            print("FriendlyFire" + " " + str(unit.index) + " " + str(pushed.index))
+        # Finding the pushed unit
+        for unit in game.other_units:
+            if unit.position == target_position:
+                unit_pushed = unit
 
-        push_to = get_neighbor(dir2, pushed.position)
-        to_height = grid.get(push_to)
-        from_height = grid.get(target)
+        # push cell
+        push_to_position = unit_pushed.position.convert_direction(dir2)
+        to_height = game.get_cell(push_to_position).state.height
+        from_height = game.get_cell(target_position).state.height
 
-        if to_height == null or to_height >= final_height or to_height > from_height + 1:
-            print("PushInvalid" + " " + str(dir1) + " " + str(dir2))
+        # target cell is dead ?
+        if isinstance(game.get_cell(push_to_position).state, DeadCell):
+            print("Bad push" + " " + str(target.x) + " " + str(target.y), file=sys.stderr)
+            return False
 
-        result = action_result(Action.push)
-        result.move_target = push_to
-        result.place_target = target
+        # Update
+        unit.position = target_position
+        unit_pushed.position = push_to_position
 
-        #Optional < Unit > possibleUnit = getUnitOnPoint(pushTo);
+        if from_height == final_height - 1:
+            player.score += 1
 
-        if not possibleUnit.present():
-            result.place_valid = True
-            result.move_valid = True
-        elif fog_of_war and not unit_visible_to_player(possibleUnit.get(), unit.player):
-            result.place_valid = False
-            result.move_valid = False
-
-        else:
-            print("PushOnUnit" + " " + str(dir1) + " " + str(dir2))
-
-        result.unit = pushed
-
-        return result
+        if to_height == final_height - 1:
+            player_other.score += 1
 
 
-    def compute_action(command,unit,dir1,dir2):
-
-        if command.equal_ignore_case(Action.move):
-            return compute_move(unit, dir1, dir2)
-        else if (can_push and command == Action.push):
-            return compute_push(unit, dir1, dir2)
-
-        else:
-            print("InvalidCommand" + " " + str(command))
