@@ -28,7 +28,8 @@ This section will be detailed once our files are merged and compacted.
 
 During the first week, we have decided to get used to the game and the environment proposed by the site. After this, we have decided to work on the following architecture which presents our classes and the main methods : 
 
-< check it on the html file > 
+![alt text](images/diagram.png "Diagram")
+
 
 
 - The class **Cell** represents one cell of the board, it contains the position and the cell and actual height.
