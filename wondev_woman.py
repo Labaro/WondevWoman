@@ -177,7 +177,6 @@ class Referee:
 
         #if from_height == final_height - 1:
          #   player.score += 1
-
         #if to_height == final_height - 1:
         #    player_other.score += 1
         return True
