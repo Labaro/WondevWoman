@@ -1,5 +1,6 @@
 import unittest
 
+from action import MoveAction, PushAction
 from node import Node
 from state import State
 from unit import Unit
@@ -65,12 +66,41 @@ class TestNode(unittest.TestCase):
 
 class TestStateMethods(unittest.TestCase):
     def setUp(self):
-        grid = [[0 for x in range(8)] for y in range(8)]
-        units = [Unit(2, 2, 1, 0), Unit(5, 5, 1, 1)]
-        self.state = State(grid, units, 1)
+        grid1 = [[0 for x in range(8)] for y in range(8)]
+        units1 = [Unit(2, 2, 1, 0), Unit(5, 5, 1, 1)]
+        self.state1 = State(grid1, units1, 1)
+
+        grid2 = [[0 for x in range(5)] for y in range(5)]
+        units2 = [Unit(2, 2, 1, 0), Unit(3, 1, -1, 0)]
+        self.state2 = State(grid2, units2, 1)
+
+        self.move_action = MoveAction(0, "N", "S")
+        self.push_action = PushAction(0, "NE", "N")
 
     def test_maximum_legal_actions(self):
-        assert len(self.state.get_legal_actions()) == 176
+        assert len(self.state1.get_legal_actions()) == 176
+
+    def test_simulation_move(self):
+        self.state2.simulate(self.move_action)
+        unit_1, unit_2 = self.state2.units
+        assert unit_1.x == 2
+        assert unit_1.y == 1
+        assert unit_2.x == 3
+        assert unit_2.y == 1
+        final_grid = [[0 for x in range(5)] for y in range(5)]
+        final_grid[2][2] = 1
+        assert self.state2.grid == final_grid
+
+    def test_simulation_push(self):
+        self.state2.simulate(self.push_action)
+        unit_1, unit_2 = self.state2.units
+        assert unit_1.x == 2
+        assert unit_1.y == 2
+        assert unit_2.x == 3
+        assert unit_2.y == 0
+        final_grid = [[0 for x in range(5)] for y in range(5)]
+        final_grid[1][3] = 1
+        assert self.state2.grid == final_grid
 
 
 if __name__ == '__main__':

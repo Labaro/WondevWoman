@@ -42,3 +42,27 @@ class State(object):
 
     def simulate(self, action):
         """We suppose that every actions that can be simulate are already legal actions"""
+        if isinstance(action, MoveAction):
+            for unit in self.units:
+                if unit.player == self.player and unit.index == action.index:
+                    unit.x, unit.y = direction_to_position(unit.x, unit.y, action.dir_1)
+                    build_x, build_y = direction_to_position(unit.x, unit.y, action.dir_2)
+                    self.grid[build_y][build_x] += 1
+                    if self.grid[build_y][build_x] == 4:
+                        self.grid[build_y][build_x] = -1
+                    break
+        else:
+            for unit in self.units:
+                if unit.player == self.player and unit.index == action.index:
+                    push_x, push_y = direction_to_position(unit.x, unit.y, action.dir_1)
+                    for u in self.units:
+                        if u.x == push_x and u.y == push_y:
+                            u.x, u.y = direction_to_position(u.x, u.y, action.dir_2)
+                            break
+                    build_x, build_y = push_x, push_y
+                    self.grid[build_y][build_x] += 1
+                    if self.grid[build_y][build_x] == 4:
+                        self.grid[build_y][build_x] = -1
+                    break
+        return State(self.grid[:][:], self.units, - self.player, self.turn + 1)
+
