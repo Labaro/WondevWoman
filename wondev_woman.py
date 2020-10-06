@@ -151,7 +151,6 @@ class Referee:
         return True
 
 
-
     def compute_push(game,unit,dir1,dir2) :
 
         ''' Compute the decision when pushandbuild '''
