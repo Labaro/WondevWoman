@@ -12,9 +12,9 @@ def direction_to_position(x, y, dir):
     if "N" in dir:
         y -= 1
     if "E" in dir:
-        x -= 1
-    if "W" in dir:
         x += 1
+    if "W" in dir:
+        x -= 1
     if "S" in dir:
         y += 1
     return x, y
