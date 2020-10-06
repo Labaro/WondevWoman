@@ -4,7 +4,7 @@ def get_valid_neighbours(grid, x, y):
     size = len(grid)
     for i in range(-1, 2):
         for j in range(-1, 2):
-            if x + i >= 0 & x + i < size & y + j >= 0 & y + j < size & grid[y + j][x + i] >= 0:
+            if x + i >= 0 and x + i < size and y + j >= 0 and y + j < size and grid[y + j][x + i] >= 0 and (i or j):
                 yield x + i, y + j
 
 
