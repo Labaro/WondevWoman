@@ -1,3 +1,5 @@
+DIRECTIONS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+
 def get_valid_neighbours(grid, x, y):
     size = len(grid)
     for i in range(-1, 2):
