@@ -142,9 +142,10 @@ class Referee:
             return False
 
         # update
-        unit.position = target_position
-        game.get_cell(place_target_position).state.height += 1
+        unit.position = target_position # move update
+        game.get_cell(place_target_position).state.height += 1 # build update
 
+        # scores update
         #if target_height == final_height - 1:
         #    player.score += 1
         return True
@@ -190,48 +191,10 @@ class Referee:
             return False
 
         # update
-        game.get_cell(place_target_position).state.height += 1
-        unit_pushed.position = push_position
+        game.get_cell(place_target_position).state.height += 1 # build update
+        unit_pushed.position = push_position # push update
 
         return True
-
-
-
-
-
-
-
-
-
-
-        # push cell
-        build_position = unit.position.convert_direction(dir2)
-        to_height = game.get_cell(build_position).state.height
-        from_height = game.get_cell(push_position).state.height
-
-        # target cell is dead ?
-        if isinstance(game.get_cell(push_to_position).state, DeadCell):
-            print("Bad push" + " " + str(target.x) + " " + str(target.y), file=sys.stderr)
-            return False
-
-        if push_to_position.x < 0 or push_to_position.y < 0 or push_to_position.x > size or push_to_position.y > size:
-            return False
-
-        if target_position.x < 0 or target_position.y < 0 or target_position.x > size or target_position.y > size:
-            return False
-
-        # Update
-        unit.position = target_position
-        unit_pushed.position = push_to_position
-
-
-        #if from_height == final_height - 1:
-         #   player.score += 1
-        #if to_height == final_height - 1:
-        #    player_other.score += 1
-        return True
-
-
 
 
 class MoveAndBuild(Action):
