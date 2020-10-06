@@ -45,7 +45,7 @@ class State(object):
                     for i in range(-1, 2):
                         dir_2 = DIRECTIONS[(idx + i) % 8]
                         push_to_x, push_to_y = direction_to_position(push_x, push_y, dir_2)
-                        if (push_x >= 0 and push_x < len(self.grid) and push_y >= 0 and push_y < len(self.grid) and
+                        if (0 <= push_x < len(self.grid) and 0 <= push_y < len(self.grid) and
                                 self.grid[push_to_y][push_to_x] - self.grid[push_y][push_x] <= 1):
                             self.legal_actions.append(PushAction(unit.index, dir_1, dir_2))
         return self.legal_actions
@@ -54,27 +54,30 @@ class State(object):
         return bool(self.get_legal_actions())
 
     def simulate(self, action):
+        new_state = State(self.grid[:][:], [Unit(u.x, u.y, u.player, u.index) for u in self.units], self.player,
+                          self.turn + 1)
         """We suppose that every actions that can be simulate are already legal actions"""
         if isinstance(action, MoveAction):
-            for unit in self.units:
-                if unit.player == self.player and unit.index == action.index:
+            for unit in new_state.units:
+                if unit.player == new_state.player and unit.index == action.index:
                     unit.x, unit.y = direction_to_position(unit.x, unit.y, action.dir_1)
                     build_x, build_y = direction_to_position(unit.x, unit.y, action.dir_2)
-                    self.grid[build_y][build_x] += 1
-                    if self.grid[build_y][build_x] == 4:
-                        self.grid[build_y][build_x] = -1
+                    new_state.grid[build_y][build_x] += 1
+                    if new_state.grid[build_y][build_x] == 4:
+                        new_state.grid[build_y][build_x] = -1
                     break
         else:
-            for unit in self.units:
-                if unit.player == self.player and unit.index == action.index:
+            for unit in new_state.units:
+                if unit.player == new_state.player and unit.index == action.index:
                     push_x, push_y = direction_to_position(unit.x, unit.y, action.dir_1)
-                    for u in self.units:
+                    for u in new_state.units:
                         if u.x == push_x and u.y == push_y:
                             u.x, u.y = direction_to_position(u.x, u.y, action.dir_2)
                             break
                     build_x, build_y = push_x, push_y
-                    self.grid[build_y][build_x] += 1
-                    if self.grid[build_y][build_x] == 4:
-                        self.grid[build_y][build_x] = -1
+                    new_state.grid[build_y][build_x] += 1
+                    if new_state.grid[build_y][build_x] == 4:
+                        new_state.grid[build_y][build_x] = -1
                     break
-        return State(self.grid[:][:], self.units, - self.player, self.turn + 1)
+        new_state.player *= -1
+        return new_state

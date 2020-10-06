@@ -81,26 +81,30 @@ class TestStateMethods(unittest.TestCase):
         assert len(self.state1.get_legal_actions()) == 176
 
     def test_simulation_move(self):
-        self.state2.simulate(self.move_action)
-        unit_1, unit_2 = self.state2.units
+        new_state = self.state2.simulate(self.move_action)
+        unit_1, unit_2 = new_state.units
         assert unit_1.x == 2
         assert unit_1.y == 1
         assert unit_2.x == 3
         assert unit_2.y == 1
         final_grid = [[0 for x in range(5)] for y in range(5)]
         final_grid[2][2] = 1
-        assert self.state2.grid == final_grid
+        assert new_state.grid == final_grid
 
     def test_simulation_push(self):
-        self.state2.simulate(self.push_action)
-        unit_1, unit_2 = self.state2.units
+        new_state = self.state2.simulate(self.push_action)
+        unit_1, unit_2 = new_state.units
         assert unit_1.x == 2
         assert unit_1.y == 2
         assert unit_2.x == 3
         assert unit_2.y == 0
         final_grid = [[0 for x in range(5)] for y in range(5)]
         final_grid[1][3] = 1
-        assert self.state2.grid == final_grid
+        assert new_state.grid == final_grid
+
+    def test_all_moves(self):
+        for action in self.state2.get_legal_actions():
+            self.state2.simulate(action)
 
 
 if __name__ == '__main__':
