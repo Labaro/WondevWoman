@@ -1,7 +1,9 @@
 import unittest
 
 from node import Node
-from wondev_woman import Position
+from state import State
+from unit import Unit
+
 
 class TestState(object):
     def __init__(self, value, final, actions):
@@ -27,17 +29,7 @@ class TestState(object):
         return action
 
 
-class MyTestCase(unittest.TestCase):
-    
-    def test_distance(self):
-        self.assertEqual(Position(2,2).distance_to((2,3)),1)
-        self.assertEqual(Position(2,2).distance_to((2,4)),2)
-        self.assertEqual(Position(2,2).distance_to((1,1)),1)
-        
-    def test_accessible_cells(self):
-        game = Game()
-        self.assertEqual(game.board()[1][1], [[(0, 0), (0, 1), (0, 2)], [(1, 0), (1, 2)], [(2, 0), (2, 1), (2, 2)]])
-        
+class TestNode(unittest.TestCase):
     def setUp(self):
         self.state1 = TestState(2, True, [])
         self.state2 = TestState(3, True, [])
@@ -69,6 +61,16 @@ class MyTestCase(unittest.TestCase):
     def test_negamax(self):
         self.root.negamax(3)
         assert self.root.value == self.root.state.value
+
+
+class TestStateMethods(unittest.TestCase):
+    def setUp(self):
+        grid = [[0 for x in range(8)] for y in range(8)]
+        units = [Unit(2, 2, 1, 0), Unit(5, 5, 1, 1)]
+        self.state = State(grid, units, 1)
+
+    def test_maximum_legal_actions(self):
+        assert len(self.state.get_legal_actions()) == 176
 
 
 if __name__ == '__main__':
