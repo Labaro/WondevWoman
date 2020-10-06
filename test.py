@@ -102,9 +102,21 @@ class TestStateMethods(unittest.TestCase):
         final_grid[1][3] = 1
         assert new_state.grid == final_grid
 
-    def test_all_moves(self):
+    def test_all_actions(self):
+        unit_1, unit_2 = self.state2.units
         for action in self.state2.get_legal_actions():
-            self.state2.simulate(action)
+            new_state = self.state2.simulate(action)
+            new_unit_1, new_unit_2 = new_state.units
+            if isinstance(action, MoveAction):
+                # Test if one and only one unit has move
+                assert (new_unit_1.x == unit_1.x and new_unit_1.y == unit_1.y and
+                        (new_unit_2.x != unit_2.x or new_unit_2.y != unit_2.y)) or (
+                                   (new_unit_1.x != unit_1.x or new_unit_1.y != unit_1.y) and
+                                   new_unit_2.x == unit_2.x and new_unit_2.y == unit_2.y)
+            else:
+                assert (new_unit_1.x == unit_1.x and new_unit_1.y == unit_1.y) or (
+                        new_unit_2.x == unit_2.x and new_unit_2.y == unit_2.y)
+                assert any([any(row) for row in new_state.grid])
 
 
 if __name__ == '__main__':

@@ -54,9 +54,9 @@ class State(object):
         return bool(self.get_legal_actions())
 
     def simulate(self, action):
+        """We suppose that every actions that can be simulate are already legal actions"""
         new_state = State(self.grid[:][:], [Unit(u.x, u.y, u.player, u.index) for u in self.units], self.player,
                           self.turn + 1)
-        """We suppose that every actions that can be simulate are already legal actions"""
         if isinstance(action, MoveAction):
             for unit in new_state.units:
                 if unit.player == new_state.player and unit.index == action.index:
