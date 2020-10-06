@@ -34,6 +34,10 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(Position(2,2).distance_to((2,4)),2)
         self.assertEqual(Position(2,2).distance_to((1,1)),1)
         
+    def test_accessible_cells(self):
+        game = Game()
+        self.assertEqual(game.board()[1][1], [[(0, 0), (0, 1), (0, 2)], [(1, 0), (1, 2)], [(2, 0), (2, 1), (2, 2)]])
+        
     def setUp(self):
         self.state1 = TestState(2, True, [])
         self.state2 = TestState(3, True, [])
