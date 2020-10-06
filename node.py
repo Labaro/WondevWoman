@@ -1,12 +1,9 @@
 class Node(object):
     """Node object is a box to handle tree exploration. All information about the game are store in the state object."""
 
-    def __init__(self, state, parent=None):
-        if parent is None:
-            parent = []
+    def __init__(self, state):
         self.state = state
         self.children = []
-        self.parent = parent
         self.value = 0
 
     def __hash__(self):
@@ -17,7 +14,7 @@ class Node(object):
 
     def get_children(self):
         for action in self.state.get_actions():
-            self.children.append(Node(self.state.simulate(action), [self]))
+            self.children.append(Node(self.state.simulate(action)))
         return self.children
 
     def evaluate(self):
