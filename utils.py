@@ -6,7 +6,7 @@ def get_valid_neighbours(grid, x, y):
                 yield x + i, y + j
 
 
-def apply_direction(x, y, dir):
+def position_to_direction(x, y, dir):
     if "N" in dir:
         y -= 1
     if "E" in dir:
@@ -16,3 +16,18 @@ def apply_direction(x, y, dir):
     if "S" in dir:
         y += 1
     return x, y
+
+
+def direction_to_position(from_x, from_y, to_x, to_y):
+    diff_x = to_x - from_x
+    diff_y = to_y - from_y
+    dir = ''
+    if diff_y == 1:
+        dir += 'S'
+    elif diff_y == -1:
+        dir += 'N'
+    if diff_x == 1:
+        dir += 'E'
+    elif diff_x == -1:
+        dir += 'W'
+    return dir
