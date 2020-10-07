@@ -196,6 +196,43 @@ class Referee:
         return True
 
 
+class Machine:
+    pass
+
+
+class Machine:
+    pass
+
+
+class MachineCodingame(Machine):
+
+    def play(self, action):
+        print(action)
+
+
+class MachineLocal(Machine):
+
+    def play_round(self, actions, our_units, units_opponent):
+
+        # Our unit
+        for i in range(len(our_units)):
+            if actions[i].move == True:
+                #computemove(our_units[i], actions[i])
+
+            if actions[i].push == True:
+                #computepush(our_units[i], actions[i])
+
+        # Opponent unit
+        for unit in units_opponent:
+            action_opponent = determine_action(unit)
+            if action_opponent.move == True:
+                #computemove
+
+            if action_opponent.push == True:
+                #computepush
+
+
+
 class MoveAndBuild(Action):
     def __init__(self, unit, dir_1, dir_2):
         super().__init__(unit, dir_1, dir_2)
