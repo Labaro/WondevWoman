@@ -1,6 +1,7 @@
-from unit import Unit
 from action import MoveAction, PushAction
+from unit import Unit
 from utils import *
+from copy import deepcopy
 
 
 class State(object):
@@ -27,7 +28,7 @@ class State(object):
             self.has_been_evaluated = True
             return self.score
 
-    def get_legal_actions(self):
+    def get_actions(self):
         if self.legal_actions:
             return self.legal_actions
         for unit in self.units:
@@ -45,18 +46,22 @@ class State(object):
                     for i in range(-1, 2):
                         dir_2 = DIRECTIONS[(idx + i) % 8]
                         push_to_x, push_to_y = direction_to_position(push_x, push_y, dir_2)
-                        if (0 <= push_x < len(self.grid) and 0 <= push_y < len(self.grid) and
+                        if (0 <= push_to_x < len(self.grid) and 0 <= push_to_y < len(self.grid) and
+                                self.grid[push_to_y][push_to_x] >= 0 and
                                 self.grid[push_to_y][push_to_x] - self.grid[push_y][push_x] <= 1):
                             self.legal_actions.append(PushAction(unit.index, dir_1, dir_2))
         return self.legal_actions
 
     def is_terminal(self):
-        return bool(self.get_legal_actions())
+        return not bool(self.get_actions())
 
     def simulate(self, action):
         """We suppose that every actions that can be simulate are already legal actions"""
-        new_state = State(self.grid[:][:], [Unit(u.x, u.y, u.player, u.index) for u in self.units], self.player,
+        new_state = State(deepcopy(self.grid), deepcopy(self.units), self.player,
                           self.turn + 1)
+        if action is None:
+            new_state.player *= -1
+            return new_state
         if isinstance(action, MoveAction):
             for unit in new_state.units:
                 if unit.player == new_state.player and unit.index == action.index:
