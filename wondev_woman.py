@@ -14,10 +14,11 @@ class Cell:
         self.state = ValidCell(0)
 
     def set_neighbours(self, board):
-        for i in range(self.position.x - 1, self.position.x + 2):
-            for j in range(self.position.y - 1, self.position.y + 2):
-                if 0 <= i < size and 0 <= j < size and (i != self.position.x and j != self.position.y):
+        for i in range(self.position[0] - 1, self.position[0] + 2):
+            for j in range(self.position[1] - 1, self.position[1] + 2):
+                if (i != self.position[0] or j != self.position[1]):
                     self.neighbours.append(board[i][j])
+        #return self.neighbours
 
     def get_accessible_neighbours(self):
         if isinstance(self.state, DeadCell):
@@ -26,7 +27,7 @@ class Cell:
             accessible_neighbours = []
             for neigh_cell in self.neighbours:
                 if isinstance(neigh_cell.state, ValidCell):
-                    if neigh_cell.state.height - self.state.height <= 1:
+                    if (neigh_cell.state.height - self.state.height <= 1):
                         accessible_neighbours.append(neigh_cell)
             return accessible_neighbours
 

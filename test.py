@@ -35,8 +35,19 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(Position(2,2).distance_to((1,1)),1)
         
     def test_accessible_cells(self):
-        game = Game()
-        self.assertEqual(game.board()[1][1], [[(0, 0), (0, 1), (0, 2)], [(1, 0), (1, 2)], [(2, 0), (2, 1), (2, 2)]])
+        simulation= [[Cell((i,j)) for i in range(-1,2)] for j in range(-1,2)]
+        Cell((0,0)).state = ValidCell(2)
+        Cell((0,1)).state = ValidCell(3)
+        Cell((0,2)).state = ValidCell(1)
+        Cell((1,0)).state = DeadCell()
+        Cell((1,1)).state = ValidCell(1)
+        Cell((1,2)).state = ValidCell(3)
+        Cell((2,0)).state = DeadCell()
+        Cell((2,1)).state = ValidCell(3)
+        Cell((2,2)).state = ValidCell(2)
+        self.assertEqual(Cell((1,1)).get_accessible_neighbours(),[Cell((0,0)),Cell((0,2)),Cell((1,1)),Cell((2,2))])
+        self.assertEqual(Cell((2,0)).get_accessible_neighbours(),[])
+        
         
     def setUp(self):
         self.state1 = TestState(2, True, [])
