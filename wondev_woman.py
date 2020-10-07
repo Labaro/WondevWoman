@@ -209,7 +209,6 @@ class MachineCodingame(Machine):
     def play(self, action):
         print(action)
 
-
 class MachineLocal(Machine):
 
     def play_round(self, actions, our_units, units_opponent):
