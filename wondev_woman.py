@@ -65,8 +65,8 @@ class Position:
         return Position(x_temp, y_temp)
 
     def direction_to(self, position):
-        diff_x = self.position.x - position.x
-        diff_y = self.position.y - position.y
+        diff_x = self.x - position.x
+        diff_y = self.y - position.y
         dir = ''
         if diff_x == 1:
             dir += 'N'
@@ -127,21 +127,21 @@ class Game:
         else:
             units_player = self.other_units
             units_other_player = self.my_units
-        for i in units_player:
+        for unit in units_player:
             # Check possible move and build
-            for move_cell in units_player[i].cell.get_accessible_neighbours():
+            for move_cell in unit.cell.get_accessible_neighbours():
                 for build_cell in move_cell.neighbours:
-                    dir_1 = units_player[i].position.direction_to(move_cell.position)
+                    dir_1 = unit.cell.position.direction_to(move_cell.position)
                     dir_2 = dir_1.direction_to(build_cell.position)
-                    actions.append(['MOVE&BUILD', units_player[i], dir_1, dir_2])
+                    actions.append(['MOVE&BUILD', unit.index, dir_1, dir_2])
             # Check possible push and build
             for push_cell in units_player[i].cell.get_pushable_neighbours():
                 for build_cell in push_cell.neighbours:
                     for adv_unit in units_other_player:
                         if push_cell.position == adv_unit.cell.position:
-                            dir_1 = units_player[i].position.direction_to(push_cell.position)
-                            dir_2 = units_player[i].position.direction_to(build_cell.position)
-                            actions.append(['PUSH&BUILD', units_player[i], dir_1, dir_2])
+                            dir_1 = unit.cell.position.direction_to(push_cell.position)
+                            dir_2 = unit.cell.position.direction_to(build_cell.position)
+                            actions.append(['PUSH&BUILD', unit.index, dir_1, dir_2])
 
     def simulate(self, action):
         new_game = deepcopy(self)
@@ -162,13 +162,13 @@ class Action:
 
 class MoveAndBuild(Action):
     def __init__(self, unit, name, dir_1, dir_2):
-        super().__init__(unit, dir_1, dir_2)
+        super().__init__(unit, name, dir_1, dir_2)
         self.pos_2 = self.pos_1.convert_direction(dir_2)
 
 
 class PushAndBuild(Action):
     def __init__(self, unit, name, dir_1, dir_2):
-        super().__init__(unit, dir_1, dir_2)
+        super().__init__(unit, name, dir_1, dir_2)
         self.pos_2 = unit.cell.position.convert_direction(dir_2)
 
 
